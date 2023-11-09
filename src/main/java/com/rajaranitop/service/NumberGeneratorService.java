@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Random;
 
@@ -21,6 +22,7 @@ public class NumberGeneratorService {
     public int generateLuckyNumber() {
         Random random = new Random();
         int number = random.nextInt(100);
+        ZoneId timeZone = ZoneId.of("GMT+0530");
         LocalDateTime creationTime = LocalDateTime.now();
 
 

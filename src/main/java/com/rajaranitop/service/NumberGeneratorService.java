@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Random;
 
@@ -22,13 +23,16 @@ public class NumberGeneratorService {
     public int generateLuckyNumber() {
         Random random = new Random();
         int number = random.nextInt(100);
-        ZoneId timeZone = ZoneId.of("GMT+0530");
-        LocalDateTime creationTime = LocalDateTime.now();
 
+        // Set the time zone to IST
+        ZoneId istTimeZone = ZoneId.of("Asia/Kolkata");
+
+        // Get the current date and time in IST
+        ZonedDateTime creationTime = ZonedDateTime.now(istTimeZone);
 
         LuckyNumber luckyNumber = new LuckyNumber();
         luckyNumber.setNumber(number);
-        luckyNumber.setNumberGenerationDate(creationTime.plusSeconds(1));
+        luckyNumber.setNumberGenerationDate(creationTime.toLocalDateTime());
 
         numberGeneratorRepo.save(luckyNumber);
         return number;

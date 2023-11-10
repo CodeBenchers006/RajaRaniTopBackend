@@ -30,6 +30,9 @@ public class NumberGeneratorService {
         // Get the current date and time in IST
         ZonedDateTime creationTime = ZonedDateTime.now(istTimeZone);
 
+        // Add one second and one millisecond
+        creationTime = creationTime.plusSeconds(1).plusNanos(1_000_000);
+
         LuckyNumber luckyNumber = new LuckyNumber();
         luckyNumber.setNumber(number);
         luckyNumber.setNumberGenerationDate(creationTime.toLocalDateTime());

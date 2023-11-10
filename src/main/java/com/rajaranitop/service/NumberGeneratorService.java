@@ -31,7 +31,7 @@ public class NumberGeneratorService {
         ZonedDateTime creationTime = ZonedDateTime.now(istTimeZone);
 
         // Add one second and one millisecond
-        creationTime = creationTime.plusSeconds(1).plusNanos(1_000_000);
+        creationTime = creationTime.plusSeconds(1);
 
         LuckyNumber luckyNumber = new LuckyNumber();
         luckyNumber.setNumber(number);

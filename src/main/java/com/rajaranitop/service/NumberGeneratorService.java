@@ -12,13 +12,16 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class NumberGeneratorService {
 
-
     @Autowired
     private NumberGeneratorRepo numberGeneratorRepo;
+
+    // Set the expiration time to 48 hours
+    private static final long EXPIRATION_HOURS = 24;
 
     public int generateLuckyNumber() {
         Random random = new Random();
@@ -42,24 +45,27 @@ public class NumberGeneratorService {
     }
 
     public ResponseEntity<Object> getNumber() {
-        List<LuckyNumber> listOfNumbers = numberGeneratorRepo.findAll();
-        if(listOfNumbers.isEmpty()){
-
-            return new ResponseEntity<>("Number not yet generated check again", HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<>(listOfNumbers.get(listOfNumbers.size()-1), HttpStatus.OK);
+        List<LuckyNumber> listOfNumbers = filterByExpiration(numberGeneratorRepo.findAll());
+        if (listOfNumbers.isEmpty()) {
+            return new ResponseEntity<>("Number not yet generated, check again", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(listOfNumbers.get(listOfNumbers.size() - 1), HttpStatus.OK);
         }
     }
 
     public ResponseEntity<Object> showResultTable() {
-
-        List<LuckyNumber> resultList = numberGeneratorRepo.findAll();
-        if(!resultList.isEmpty()){
-            return new ResponseEntity<>(resultList,HttpStatus.OK);
+        List<LuckyNumber> resultList = filterByExpiration(numberGeneratorRepo.findAll());
+        if (!resultList.isEmpty()) {
+            return new ResponseEntity<>(resultList, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("empty", HttpStatus.NOT_FOUND);
         }
-        else
-            return new ResponseEntity<>("empty",HttpStatus.NOT_FOUND);
+    }
 
+    private List<LuckyNumber> filterByExpiration(List<LuckyNumber> numbers) {
+        LocalDateTime expirationTime = LocalDateTime.now().minusHours(EXPIRATION_HOURS);
+        return numbers.stream()
+                .filter(number -> number.getNumberGenerationDate().isAfter(expirationTime))
+                .collect(Collectors.toList());
     }
 }

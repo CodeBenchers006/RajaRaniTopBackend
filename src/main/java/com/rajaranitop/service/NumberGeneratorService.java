@@ -2,6 +2,8 @@ package com.rajaranitop.service;
 
 import com.rajaranitop.beans.LuckyNumber;
 import com.rajaranitop.repository.NumberGeneratorRepo;
+import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
+@Log
 public class NumberGeneratorService {
 
     @Autowired
@@ -41,6 +44,7 @@ public class NumberGeneratorService {
         luckyNumber.setNumberGenerationDate(creationTime.toLocalDateTime());
 
         numberGeneratorRepo.save(luckyNumber);
+        log.info("Number generated successfully at "+creationTime.toLocalDateTime().toString());
         return number;
     }
 

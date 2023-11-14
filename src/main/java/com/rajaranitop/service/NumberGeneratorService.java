@@ -39,13 +39,23 @@ public class NumberGeneratorService {
         // Add one second and one millisecond
         creationTime = creationTime.plusSeconds(1);
 
-        LuckyNumber luckyNumber = new LuckyNumber();
-        luckyNumber.setNumber(number);
-        luckyNumber.setNumberGenerationDate(creationTime.toLocalDateTime());
+        // Check if the hour is between 9 and 23 (inclusive) and the minute and second are 0
+        if (creationTime.getHour() >= 9 && creationTime.getHour() <= 23 &&
+                creationTime.getMinute() == 0 && creationTime.getSecond() == 0) {
 
-        numberGeneratorRepo.save(luckyNumber);
-        log.info("Number generated successfully at "+creationTime.toLocalDateTime().toString());
-        return number;
+            LuckyNumber luckyNumber = new LuckyNumber();
+            luckyNumber.setNumber(number);
+            luckyNumber.setNumberGenerationDate(creationTime.toLocalDateTime());
+
+            numberGeneratorRepo.save(luckyNumber);
+            log.info("Number generated successfully at " + creationTime.toLocalDateTime().toString());
+
+            return number;
+        } else {
+            // Log or handle the case where the condition is not met
+            log.info("Number not generated as per the specified condition.");
+            return -1; // or any other value indicating that the number was not generated
+        }
     }
 
     public ResponseEntity<Object> getNumber() {

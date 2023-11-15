@@ -68,8 +68,8 @@ public class NumberGeneratorService {
         ZonedDateTime creationTime = ZonedDateTime.now(istTimeZone);
 
         // Check if the hour is between 9 and 23 (inclusive) and the minute and second are 0
-        if (creationTime.getHour() >= 9 && creationTime.getHour() <= 23 &&
-                creationTime.getMinute() == 0 && creationTime.getSecond() == 0) {
+        if (creationTime.getHour() >= 8&& creationTime.getHour() <= 22 &&
+                creationTime.getMinute() == 59 && creationTime.getSecond() == 59) {
 
             // Check if a lucky number already exists for the current day and hour
             if (!isLuckyNumberGeneratedForCurrentDayAndHour(creationTime.getHour())) {
@@ -79,7 +79,7 @@ public class NumberGeneratorService {
 
                 LuckyNumber luckyNumber = new LuckyNumber();
                 luckyNumber.setNumber(number);
-                luckyNumber.setNumberGenerationDate(creationTime.toLocalDateTime());
+                luckyNumber.setNumberGenerationDate(creationTime.toLocalDateTime().plusSeconds(1));
 
                 numberGeneratorRepo.save(luckyNumber);
                 log.info("Number generated successfully at " + creationTime.toLocalDateTime().toString());

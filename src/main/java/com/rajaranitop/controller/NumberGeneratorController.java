@@ -1,12 +1,15 @@
 package com.rajaranitop.controller;
 
+import com.rajaranitop.beans.LuckyNumber;
 import com.rajaranitop.service.NumberGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/lottery")
@@ -29,5 +32,26 @@ public class NumberGeneratorController {
     @GetMapping("/showResult")
     public ResponseEntity<Object> showResultTable(){
         return numberGeneratorService.showResultTable();
+    }
+
+    @GetMapping("/showAll")
+    public ResponseEntity<Object> showAllData(){
+        return numberGeneratorService.showAllData();
+    }
+
+    @GetMapping("/resultsByDate")
+    public ResponseEntity<Object> showResultTable(@RequestParam("date")
+                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        List<LuckyNumber> resultList = numberGeneratorService.getResultsForDate(date);
+        if (!resultList.isEmpty()) {
+            return new ResponseEntity<>(resultList, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("No results found for the specified date", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/manualDeleteOldData")
+    public void manualDeleteOldData() {
+        numberGeneratorService.deleteOldData();
     }
 }

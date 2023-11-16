@@ -80,7 +80,7 @@ public class NumberGeneratorService {
 
                 LuckyNumber luckyNumber = new LuckyNumber();
                 luckyNumber.setNumber(number);
-                luckyNumber.setNumberGenerationDate(creationTime.toLocalDateTime().plusSeconds(1));
+                luckyNumber.setNumberGenerationDate(creationTime.toLocalDateTime());
 
                 numberGeneratorRepo.save(luckyNumber);
                 log.info("Number generated successfully at " + creationTime.toLocalDateTime().toString());

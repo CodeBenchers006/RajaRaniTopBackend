@@ -60,7 +60,7 @@ public class NumberGeneratorService {
 //        }
 //    }
 
-    public int generateLuckyNumber() {
+    public synchronized int generateLuckyNumber() {
         // Set the time zone to IST
         ZoneId istTimeZone = ZoneId.of("Asia/Kolkata");
 
@@ -68,14 +68,17 @@ public class NumberGeneratorService {
         ZonedDateTime creationTime = ZonedDateTime.now(istTimeZone);
 
         // Check if the hour is between 9 and 23 (inclusive) and the minute and second are 0
-        if (creationTime.getHour() >= 8&& creationTime.getHour() <= 22
+        if (creationTime.getHour() >= 9 && creationTime.getHour() <= 17
                 ) {
 
             // Check if a lucky number already exists for the current day and hour
-            if (!isLuckyNumberGeneratedForCurrentDayAndHour(creationTime.getHour())) {
+
                 // Generate a new lucky number
                 Random random = new Random();
                 int number = random.nextInt(100);
+
+                // Format the number to have two digits if it's between 0 and 9
+            String formattedNumber = String.format("%02d", number);
 
                 LuckyNumber luckyNumber = new LuckyNumber();
                 luckyNumber.setNumber(number);
@@ -84,17 +87,13 @@ public class NumberGeneratorService {
                 numberGeneratorRepo.save(luckyNumber);
                 log.info("Number generated successfully at " + creationTime.toLocalDateTime().toString());
 
-                return number;
+            return Integer.parseInt(formattedNumber);
             } else {
                 // Log or handle the case where a number has already been generated for the current day and hour
                 log.info("Number not generated as a number already exists for the current day and hour.");
                 return -1; // or any other value indicating that the number was not generated
             }
-        } else {
-            // Log or handle the case where the condition is not met
-            log.info("Number not generated as per the specified condition.");
-            return -1; // or any other value indicating that the number was not generated
-        }
+
     }
 
     private boolean isLuckyNumberGeneratedForCurrentDayAndHour(int hour) {
@@ -172,5 +171,10 @@ public class NumberGeneratorService {
 
         List<LuckyNumber> allData = numberGeneratorRepo.findAll();
         return new ResponseEntity<>(allData,HttpStatus.OK);
+    }
+
+    public void deleteAllData(){
+        numberGeneratorRepo.deleteAll();
+        log.info("data erased");
     }
 }

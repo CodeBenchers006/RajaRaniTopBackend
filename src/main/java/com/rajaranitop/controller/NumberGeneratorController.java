@@ -54,4 +54,9 @@ public class NumberGeneratorController {
     public void manualDeleteOldData() {
         numberGeneratorService.deleteOldData();
     }
+
+    @GetMapping("/deleteOldData")
+    public void deleteOldData() {
+        numberGeneratorService.deleteAllData();
+    }
 }

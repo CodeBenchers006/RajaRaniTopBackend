@@ -68,17 +68,15 @@ public class NumberGeneratorService {
         ZonedDateTime creationTime = ZonedDateTime.now(istTimeZone);
 
         // Check if the hour is between 9 and 23 (inclusive) and the minute and second are 0
-        if (creationTime.getHour() >= 9 && creationTime.getHour() <= 17
-                ) {
-
+        if (creationTime.getHour() >= 9 && creationTime.getHour() <= 17) {
             // Check if a lucky number already exists for the current day and hour
-
+            if (!isLuckyNumberGeneratedForCurrentDayAndHour(creationTime.getHour())) {
                 // Generate a new lucky number
                 Random random = new Random();
                 int number = random.nextInt(100);
 
                 // Format the number to have two digits if it's between 0 and 9
-            String formattedNumber = String.format("%02d", number);
+                String formattedNumber = String.format("%02d", number);
 
                 LuckyNumber luckyNumber = new LuckyNumber();
                 luckyNumber.setNumber(number);
@@ -87,13 +85,17 @@ public class NumberGeneratorService {
                 numberGeneratorRepo.save(luckyNumber);
                 log.info("Number generated successfully at " + creationTime.toLocalDateTime().toString());
 
-            return Integer.parseInt(formattedNumber);
+                return Integer.parseInt(formattedNumber);
             } else {
                 // Log or handle the case where a number has already been generated for the current day and hour
                 log.info("Number not generated as a number already exists for the current day and hour.");
                 return -1; // or any other value indicating that the number was not generated
             }
-
+        } else {
+            // Log or handle the case where the current time is not within the allowed range
+            log.info("Number not generated as the current time is not within the allowed range.");
+            return -1; // or any other value indicating that the number was not generated
+        }
     }
 
     private boolean isLuckyNumberGeneratedForCurrentDayAndHour(int hour) {

@@ -3,6 +3,7 @@ package com.rajaranitop.service;
 import com.rajaranitop.beans.CustomNumber;
 import com.rajaranitop.beans.DummyLuckyNumberTable;
 import com.rajaranitop.beans.LuckyNumber;
+import com.rajaranitop.repository.DummyNumberGeneratorRepo;
 import com.rajaranitop.repository.NumberGeneratorRepo;
 import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j;
@@ -24,85 +25,15 @@ import java.util.stream.Collectors;
 
 @Service
 @Log
-public class NumberGeneratorService {
+public class DummyNumberGeneratorService {
 
     @Autowired
-    private NumberGeneratorRepo numberGeneratorRepo;
+    private DummyNumberGeneratorRepo numberGeneratorRepo;
 
     // Set the expiration time to 7 days
     private static final long EXPIRATION_DAYS = 7;
 
-//    public int generateLuckyNumber() {
-//        Random random = new Random();
-//        int number = random.nextInt(100);
-//
-//        // Set the time zone to IST
-//        ZoneId istTimeZone = ZoneId.of("Asia/Kolkata");
-//
-//        // Get the current date and time in IST
-//        ZonedDateTime creationTime = ZonedDateTime.now(istTimeZone);
-//
-//        // Add one second and one millisecond
-//        creationTime = creationTime.plusSeconds(1);
-//
-//        // Check if the hour is between 9 and 23 (inclusive) and the minute and second are 0
-//        if (creationTime.getHour() >= 9 && creationTime.getHour() <= 23 &&
-//                creationTime.getMinute() == 0 && creationTime.getSecond() == 0) {
-//
-//            LuckyNumber luckyNumber = new LuckyNumber();
-//            luckyNumber.setNumber(number);
-//            luckyNumber.setNumberGenerationDate(creationTime.toLocalDateTime());
-//
-//            numberGeneratorRepo.save(luckyNumber);
-//            log.info("Number generated successfully at " + creationTime.toLocalDateTime().toString());
-//
-//            return number;
-//        } else {
-//            // Log or handle the case where the condition is not met
-//            log.info("Number not generated as per the specified condition.");
-//            return -1; // or any other value indicating that the number was not generated
-//        }
-//    }
 
-    /*
-    public synchronized int generateLuckyNumber() {
-        // Set the time zone to IST
-        ZoneId istTimeZone = ZoneId.of("Asia/Kolkata");
-
-        // Get the current date and time in IST
-        ZonedDateTime creationTime = ZonedDateTime.now(istTimeZone);
-
-        // Check if the hour is between 9 and 23 (inclusive) and the minute and second are 0
-        if (creationTime.getHour() >= 9 && creationTime.getHour() <= 17) {
-            // Check if a lucky number already exists for the current day and hour
-            if (!isLuckyNumberGeneratedForCurrentDayAndHour(creationTime.getHour())) {
-                // Generate a new lucky number
-                Random random = new Random();
-                int number = random.nextInt(100);
-
-                // Format the number to have two digits if it's between 0 and 9
-                String formattedNumber = String.format("%02d", number);
-
-                LuckyNumber luckyNumber = new LuckyNumber();
-                luckyNumber.setNumber(number);
-                luckyNumber.setNumberGenerationDate(creationTime.toLocalDateTime());
-
-                numberGeneratorRepo.save(luckyNumber);
-                log.info("Number generated successfully at " + creationTime.toLocalDateTime().toString());
-
-                return Integer.parseInt(formattedNumber);
-            } else {
-                // Log or handle the case where a number has already been generated for the current day and hour
-                log.info("Number not generated as a number already exists for the current day and hour.");
-                return -1; // or any other value indicating that the number was not generated
-            }
-        } else {
-            // Log or handle the case where the current time is not within the allowed range
-            log.info("Number not generated as the current time is not within the allowed range.");
-            return -1; // or any other value indicating that the number was not generated
-        }
-    }
-*/
 
 
     public synchronized int generateLuckyNumber() throws RestClientException {
@@ -119,18 +50,18 @@ public class NumberGeneratorService {
             // Check if a lucky number already exists for the current day and hour
             if (!isLuckyNumberGeneratedForCurrentDayAndHour(creationTime.getHour())) {
                 // Generate a new lucky number
-                Random random = new Random();
-                int number = random.nextInt(100);
+//                Random random = new Random();
+//                int number = random.nextInt(100);
 
-//                RestTemplate restTemplate = new RestTemplate();
-//
-//                CustomNumber customNumber = restTemplate.getForObject("http://localhost:8080/custom/getCustomNumber", CustomNumber.class);
-//                int number = customNumber != null ? customNumber.getCustomNumberData() : 0;
+                RestTemplate restTemplate = new RestTemplate();
+
+                CustomNumber customNumber = restTemplate.getForObject("https://lotterybackend-wqh2.onrender.com/custom/getCustomNumber", CustomNumber.class);
+                int number = customNumber != null ? customNumber.getCustomNumberData() : 0;
 
                 // Format the number to have two digits if it's between 0 and 9
                 String formattedNumber = String.format("%02d", number);
 
-                LuckyNumber luckyNumber = new LuckyNumber();
+                DummyLuckyNumberTable luckyNumber = new DummyLuckyNumberTable();
                 luckyNumber.setNumber(number);
                 luckyNumber.setNumberGenerationDate(creationTime.toLocalDateTime());
 
@@ -160,7 +91,7 @@ public class NumberGeneratorService {
         LocalDateTime startOfCurrentHour = startOfCurrentDay.plusHours(hour);
         LocalDateTime endOfCurrentHour = startOfCurrentHour.plusHours(1);
 
-        List<LuckyNumber> luckyNumbers = numberGeneratorRepo
+        List<DummyLuckyNumberTable> luckyNumbers = numberGeneratorRepo
                 .findByNumberGenerationDateBetween(startOfCurrentHour, endOfCurrentHour);
 
         return !luckyNumbers.isEmpty();
@@ -169,7 +100,7 @@ public class NumberGeneratorService {
 
     public ResponseEntity<Object> getNumber() {
         LocalDateTime expirationTime = LocalDateTime.now().minusHours(48);
-        List<LuckyNumber> resultList = filterBy24HourExpiration(numberGeneratorRepo.findAll(), expirationTime);
+        List<DummyLuckyNumberTable> resultList = filterBy24HourExpiration(numberGeneratorRepo.findAll(), expirationTime);
         if (resultList.isEmpty()) {
             return new ResponseEntity<>("Number not yet generated, check again", HttpStatus.OK);
         } else {
@@ -185,7 +116,7 @@ public class NumberGeneratorService {
         LocalDateTime startOfDay = currentTime.toLocalDate().atStartOfDay();
         LocalDateTime endOfDay = startOfDay.plusDays(1);
 
-        List<LuckyNumber> resultList = filterByCurrentDay(numberGeneratorRepo.findAll(), startOfDay, endOfDay);
+        List<DummyLuckyNumberTable> resultList = filterByCurrentDay(numberGeneratorRepo.findAll(), startOfDay, endOfDay);
         if (!resultList.isEmpty()) {
             return new ResponseEntity<>(resultList, HttpStatus.OK);
         } else {
@@ -197,34 +128,34 @@ public class NumberGeneratorService {
     @Scheduled(cron = "0 0 3 * * MON")
     public void deleteOldData() {
         LocalDateTime expirationTime = LocalDateTime.now().minusDays(EXPIRATION_DAYS);
-        List<LuckyNumber> numbersToDelete = numberGeneratorRepo.findByNumberGenerationDateBefore(expirationTime);
+        List<DummyLuckyNumberTable> numbersToDelete = numberGeneratorRepo.findByNumberGenerationDateBefore(expirationTime);
         numberGeneratorRepo.deleteAll(numbersToDelete);
         log.info("Old data deleted successfully.");
     }
 
-    private List<LuckyNumber> filterBy24HourExpiration(List<LuckyNumber> numbers, LocalDateTime expirationTime) {
+    private List<DummyLuckyNumberTable> filterBy24HourExpiration(List<DummyLuckyNumberTable> numbers, LocalDateTime expirationTime) {
         return numbers.stream()
                 .filter(number -> number.getNumberGenerationDate().isAfter(expirationTime))
                 .collect(Collectors.toList());
     }
-    private List<LuckyNumber> filterByCurrentDay(List<LuckyNumber> numbers, LocalDateTime startOfDay, LocalDateTime endOfDay) {
+    private List<DummyLuckyNumberTable> filterByCurrentDay(List<DummyLuckyNumberTable> numbers, LocalDateTime startOfDay, LocalDateTime endOfDay) {
         return numbers.stream()
                 .filter(number -> number.getNumberGenerationDate().isAfter(startOfDay) && number.getNumberGenerationDate().isBefore(endOfDay))
                 .collect(Collectors.toList());
     }
 
-    public List<LuckyNumber> getResultsForDate(LocalDate date) {
+    public List<DummyLuckyNumberTable> getResultsForDate(LocalDate date) {
 
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = startOfDay.plusDays(1);
 
-        List<LuckyNumber> results = numberGeneratorRepo.findByNumberGenerationDateBetween(startOfDay, endOfDay);
+        List<DummyLuckyNumberTable> results = numberGeneratorRepo.findByNumberGenerationDateBetween(startOfDay, endOfDay);
         return filterBy24HourExpiration(results, startOfDay.minusHours(24));
     }
 
     public ResponseEntity<Object> showAllData() {
 
-        List<LuckyNumber> allData = numberGeneratorRepo.findAll();
+        List<DummyLuckyNumberTable> allData = numberGeneratorRepo.findAll();
         return new ResponseEntity<>(allData,HttpStatus.OK);
     }
 

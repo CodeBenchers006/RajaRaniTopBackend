@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/lottery")
-@CrossOrigin(origins = "*",allowedHeaders = "*")
+@CrossOrigin
 public class NumberGeneratorController {
 
     @Autowired

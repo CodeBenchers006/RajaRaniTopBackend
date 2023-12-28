@@ -1,5 +1,6 @@
 package com.rajaranitop.service;
 
+import com.rajaranitop.beans.CustomNumber;
 import com.rajaranitop.beans.LuckyNumber;
 import com.rajaranitop.repository.NumberGeneratorRepo;
 import lombok.extern.java.Log;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -72,8 +74,13 @@ public class NumberGeneratorService {
             // Check if a lucky number already exists for the current day and hour
             if (!isLuckyNumberGeneratedForCurrentDayAndHour(creationTime.getHour())) {
                 // Generate a new lucky number
-                Random random = new Random();
-                int number = random.nextInt(100);
+//                Random random = new Random();
+//                int number = random.nextInt(100);
+
+                RestTemplate restTemplate = new RestTemplate();
+
+                CustomNumber customNumber = restTemplate.getForObject("https://lotterybackend-wqh2.onrender.com/custom/getCustomNumber", CustomNumber.class);
+                int number = customNumber != null ? customNumber.getCustomNumberData() : 0;
 
                 // Format the number to have two digits if it's between 0 and 9
                 String formattedNumber = String.format("%02d", number);

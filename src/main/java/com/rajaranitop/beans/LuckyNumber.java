@@ -1,5 +1,6 @@
 package com.rajaranitop.beans;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,8 @@ public class LuckyNumber {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private int number;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
     private LocalDateTime numberGenerationDate;
 
 

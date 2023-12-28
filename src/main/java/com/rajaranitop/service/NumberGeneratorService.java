@@ -1,7 +1,5 @@
 package com.rajaranitop.service;
 
-import com.rajaranitop.beans.CustomNumber;
-import com.rajaranitop.beans.DummyLuckyNumberTable;
 import com.rajaranitop.beans.LuckyNumber;
 import com.rajaranitop.repository.NumberGeneratorRepo;
 import lombok.extern.java.Log;
@@ -11,8 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -64,7 +60,6 @@ public class NumberGeneratorService {
 //        }
 //    }
 
-    /*
     public synchronized int generateLuckyNumber() {
         // Set the time zone to IST
         ZoneId istTimeZone = ZoneId.of("Asia/Kolkata");
@@ -102,54 +97,6 @@ public class NumberGeneratorService {
             return -1; // or any other value indicating that the number was not generated
         }
     }
-*/
-
-
-    public synchronized int generateLuckyNumber() throws RestClientException {
-        // Set the time zone to IST
-        ZoneId istTimeZone = ZoneId.of("Asia/Kolkata");
-
-
-
-        // Get the current date and time in IST
-        ZonedDateTime creationTime = ZonedDateTime.now(istTimeZone);
-
-        // Check if the hour is between 9 and 23 (inclusive) and the minute and second are 0
-        if (creationTime.getHour() >= 9 && creationTime.getHour() <= 17) {
-            // Check if a lucky number already exists for the current day and hour
-            if (!isLuckyNumberGeneratedForCurrentDayAndHour(creationTime.getHour())) {
-                // Generate a new lucky number
-                Random random = new Random();
-                int number = random.nextInt(100);
-
-//                RestTemplate restTemplate = new RestTemplate();
-//
-//                CustomNumber customNumber = restTemplate.getForObject("http://localhost:8080/custom/getCustomNumber", CustomNumber.class);
-//                int number = customNumber != null ? customNumber.getCustomNumberData() : 0;
-
-                // Format the number to have two digits if it's between 0 and 9
-                String formattedNumber = String.format("%02d", number);
-
-                LuckyNumber luckyNumber = new LuckyNumber();
-                luckyNumber.setNumber(number);
-                luckyNumber.setNumberGenerationDate(creationTime.toLocalDateTime());
-
-                numberGeneratorRepo.save(luckyNumber);
-                log.info("Number generated successfully at " + creationTime.toLocalDateTime().toString());
-
-                return Integer.parseInt(formattedNumber);
-            } else {
-                // Log or handle the case where a number has already been generated for the current day and hour
-                log.info("Number not generated as a number already exists for the current day and hour.");
-                return -1; // or any other value indicating that the number was not generated
-            }
-        } else {
-            // Log or handle the case where the current time is not within the allowed range
-            log.info("Number not generated as the current time is not within the allowed range.");
-            return -1; // or any other value indicating that the number was not generated
-        }
-    }
-
 
     private boolean isLuckyNumberGeneratedForCurrentDayAndHour(int hour) {
         // Get the current date and time in IST

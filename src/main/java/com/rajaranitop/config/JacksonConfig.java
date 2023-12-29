@@ -18,8 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
-@EnableWebMvc
-public class JacksonConfig extends WebMvcConfigurerAdapter {
+public class JacksonConfig  {
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jacksonCustomizer() {
@@ -30,26 +29,26 @@ public class JacksonConfig extends WebMvcConfigurerAdapter {
         };
     }
 
-//    @Bean
-//    public CorsFilter corsFilter() {
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration config = new CorsConfiguration();
-//        config.setAllowCredentials(true);
-//        config.setAllowedOrigins(Arrays.asList("http://rajaranitop.com", "http://localhost:3000"));
-//        config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization"));
-//        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"));
-//        source.registerCorsConfiguration("/**", config);
-//        return new CorsFilter(source);
-//    }
-
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000","http://rajaranitop.com")
-                .allowedMethods("GET", "POST", "PUT", "DELETE","OPTIONS")
-                .allowedHeaders("Content-Type", "Authorization")
-                .allowCredentials(true) // If your requests include credentials (like cookies)
-                .maxAge(3600); // Max age of the preflight request in seconds;
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(Arrays.asList("http://rajaranitop.com", "http://localhost:3000"));
+        config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"));
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
+
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOrigins("http://localhost:3000","http://rajaranitop.com")
+//                .allowedMethods("GET", "POST", "PUT", "DELETE","OPTIONS")
+//                .allowedHeaders("Content-Type", "Authorization")
+//                .allowCredentials(true) // If your requests include credentials (like cookies)
+//                .maxAge(3600); // Max age of the preflight request in seconds;
+//    }
 
 }

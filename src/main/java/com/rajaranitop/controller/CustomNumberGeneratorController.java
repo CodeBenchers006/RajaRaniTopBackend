@@ -19,7 +19,7 @@ public class CustomNumberGeneratorController {
         return customNumberService.setCustomNumber(customNumber,token);
     }
 
-    @PostMapping("/generateNewNumber")
+    @GetMapping("/generateNewNumber")
     public CustomNumber generateNewNumber(@RequestParam String token, @RequestParam int data){
         return customNumberService.generateNewNumber(token,data);
     }

@@ -76,4 +76,31 @@ public class CustomNumberService {
 
         return customNumberList.get(0);
     }
+
+    public CustomNumber generateNewNumber(String token, int data) {
+        authenticationService.authenticate(token);
+
+        log.info(String.valueOf(data));
+
+        // Check if the provided number is within the valid range
+        if (!checkNumberInRange(data)) {
+            throw new RuntimeException("Number out of range");
+        }
+
+        // Check if any number exists and update it
+        if (!customNumberRepo.findAll().isEmpty() && checkNumberInRange(data)) {
+            CustomNumber existingNumber = customNumberRepo.findById(1).orElseThrow(() -> new RuntimeException("No numbers"));
+            existingNumber.setCustomNumberData(data);
+            customNumberRepo.save(existingNumber);
+            return existingNumber;
+        }
+
+        // Save and return the number
+        CustomNumber adminGeneratedNumber = new CustomNumber();
+        adminGeneratedNumber.setCustomId(1);
+        adminGeneratedNumber.setCustomNumberData(data);
+        customNumberRepo.save(adminGeneratedNumber);
+        return adminGeneratedNumber;
+
+    }
 }

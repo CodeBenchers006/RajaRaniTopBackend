@@ -19,6 +19,11 @@ public class CustomNumberGeneratorController {
         return customNumberService.setCustomNumber(customNumber,token);
     }
 
+    @PostMapping("/generateNewNumber")
+    public CustomNumber generateNewNumber(@RequestParam String token, @RequestParam int data){
+        return customNumberService.generateNewNumber(token,data);
+    }
+
     @GetMapping("/getCustomNumber")
     public CustomNumber getAdminGeneratedNumber(){
         return customNumberService.getAdminGeneratedNumber();

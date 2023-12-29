@@ -19,8 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Configuration
-@EnableWebMvc
-public class JacksonConfig implements WebMvcConfigurer {
+public class JacksonConfig {
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jacksonCustomizer() {
@@ -43,11 +42,5 @@ public class JacksonConfig implements WebMvcConfigurer {
         return new CorsFilter(source);
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOriginPatterns("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowedHeaders("*");
-    }
+
 }

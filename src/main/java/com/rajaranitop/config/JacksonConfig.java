@@ -47,7 +47,9 @@ public class JacksonConfig extends WebMvcConfigurerAdapter {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000","http://rajaranitop.com")
                 .allowedMethods("GET", "POST", "PUT", "DELETE","OPTIONS")
-                .allowedHeaders("Content-Type", "Authorization");
+                .allowedHeaders("Content-Type", "Authorization")
+                .allowCredentials(true) // If your requests include credentials (like cookies)
+                .maxAge(3600); // Max age of the preflight request in seconds;
     }
 
 }

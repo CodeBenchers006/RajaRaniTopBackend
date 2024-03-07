@@ -8,14 +8,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
 
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Collections;
 
 @Configuration
 public class JacksonConfig  {
@@ -40,15 +37,5 @@ public class JacksonConfig  {
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
-
-//    @Override
-//    public void addCorsMappings(CorsRegistry registry) {
-//        registry.addMapping("/**")
-//                .allowedOrigins("http://localhost:3000","http://rajaranitop.com")
-//                .allowedMethods("GET", "POST", "PUT", "DELETE","OPTIONS")
-//                .allowedHeaders("Content-Type", "Authorization")
-//                .allowCredentials(true) // If your requests include credentials (like cookies)
-//                .maxAge(3600); // Max age of the preflight request in seconds;
-//    }
 
 }

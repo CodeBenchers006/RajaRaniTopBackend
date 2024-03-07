@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -104,4 +105,30 @@ public class AdminService {
         return responseDto;
     }
 
+    public ResponseDto updatePassword(SignUpDto signUpDto) {
+        if(!Objects.nonNull(adminRepo.findByUsername(signUpDto.getUserName()))){
+            logger.error("User doest not exist with username {}",signUpDto.getUserName());
+            throw new RuntimeException(("user does not exists "));
+        }
+
+        String encryptedPassword = signUpDto.getPassword();
+        try{
+            encryptedPassword = hashPassword(encryptedPassword);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        Admin existingAdmin = adminRepo.findByUsername(signUpDto.getUserName());
+        existingAdmin.setPassword(encryptedPassword);
+        adminRepo.save(existingAdmin);
+
+        ResponseDto responseDto = new ResponseDto("success","Password is updated");
+        logger.info("Password is updated");
+        return responseDto;
+    }
+
+    public List<Admin> showAdmins() {
+
+        return adminRepo.findAll();
+    }
 }
